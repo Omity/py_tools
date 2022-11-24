@@ -18,7 +18,7 @@ import sys
 
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
-from PyQt5.QtWidgets import QWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QApplication, QButtonGroup
 from conversion import Ui_conversion
 
 # 变量声明
@@ -63,14 +63,26 @@ class ConversionTool(QWidget, Ui_conversion):
         ]
         self.numType = 3
         self.setupUi(self)
+        self.group = QButtonGroup(self)
+        self.add()
         self.connect()
         self.numChoice.setCurrentIndex(self.numType)
         self.numMask.setText(self.conversionItem[self.numType][0])
         self.numEdit.setValidator(self.conversionItem[self.numType][2])
 
+    def add(self):
+        self.group.addButton(self.binBtn, id=0)
+        self.group.addButton(self.octBtn, id=1)
+        self.group.addButton(self.intBtn, id=2)
+        self.group.addButton(self.hexBtn, id=3)
+
     def connect(self):
+        self.group.buttonClicked[int].connect(self.buttonClick)
         self.numChoice.currentIndexChanged[int].connect(self.numChoiceChanged)
         self.numEdit.textEdited.connect(lambda: self.editInput(self.conversionItem[self.numType][1]))
+
+    def buttonClick(self, num):
+        self.numChoice.setCurrentIndex(num)
 
     def numChoiceChanged(self, numType):
         self.numType = numType
