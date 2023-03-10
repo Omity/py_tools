@@ -1,0 +1,9 @@
+/pack.py
+/ui_to_py.py
+/ui/*.py
+/venv
+/build/
+/dist/
+*__pycache__*
+*.spec*
+*.idea*

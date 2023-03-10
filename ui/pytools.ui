@@ -93,8 +93,8 @@ QScrollArea {
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>94</width>
-        <height>371</height>
+        <width>85</width>
+        <height>366</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
@@ -113,6 +113,22 @@ QScrollArea {
        <property name="horizontalSpacing">
         <number>0</number>
        </property>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="asciiBtn">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="text">
+          <string>ASCII</string>
+         </property>
+        </widget>
+       </item>
        <item row="1" column="0">
         <widget class="QPushButton" name="conversionBtn">
          <property name="sizePolicy">
@@ -141,22 +157,6 @@ QScrollArea {
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="asciiBtn">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="cursor">
-          <cursorShape>PointingHandCursor</cursorShape>
-         </property>
-         <property name="text">
-          <string>ASCII</string>
-         </property>
-        </widget>
        </item>
        <item row="2" column="0">
         <widget class="QPushButton" name="serialBtn">

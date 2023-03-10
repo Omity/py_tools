@@ -1,12 +1,13 @@
 # !/usr/bin/env python3
 # _*_ coding: utf-8 _*_
+import os.path
 import sys
 
-from PyQt5.QtCore import QRegExp, QFileInfo, QUrl
-from PyQt5.QtGui import QIntValidator, QRegExpValidator, QIcon
+from PyQt5.QtCore import QRegExp, QUrl
+from PyQt5.QtGui import QRegExpValidator, QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QButtonGroup
 
-from ascii import Ui_ascii
+from ui.ascii import Ui_ascii
 
 ascii_control = [
     '\\0',
@@ -109,8 +110,9 @@ class AsciiTool(QWidget, Ui_ascii):
         self.parent = parent
         self.group = QButtonGroup(self)
         self.numType = 3
+        self.abspath = kwargs['path']
         self.setupUi(self)
-        self.textBrowser.setSource(QUrl.fromLocalFile('ascii_info.html'))
+        self.textBrowser.setSource(QUrl.fromLocalFile(os.path.join(self.abspath, 'data/ascii_info.html')))
 
         self.transformChoiceItem = [
             self.asciiToNum,
@@ -167,7 +169,7 @@ class AsciiTool(QWidget, Ui_ascii):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ui = AsciiTool()
-    ui.setWindowIcon(QIcon('py_tool.ico'))
+    ui = AsciiTool(path='../')
+    ui.setWindowIcon(QIcon('../data/py_tool.ico'))
     ui.show()
     sys.exit(app.exec_())
