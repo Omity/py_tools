@@ -58,7 +58,6 @@ class SerialTool(QWidget, Ui_serial_tool):
 
     def __init__(self, parent=None, *args, **kwargs):
         super().__init__(parent)
-        self.setParent(parent)
         self.setupUi(self)
         self.info = [
             {'name': 'com1', 'status': True, 'pid': 1, 'vid': 2, 'description': " test for o"}

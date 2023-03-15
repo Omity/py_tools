@@ -107,7 +107,6 @@ class AsciiTool(QWidget, Ui_ascii):
 
     def __init__(self, parent=None, *args, **kwargs):
         super().__init__(parent)
-        self.parent = parent
         self.group = QButtonGroup(self)
         self.numType = 3
         self.abspath = kwargs['path']

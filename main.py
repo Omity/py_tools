@@ -25,6 +25,7 @@ from ui.pytools import Ui_pyTools
 from api.asciiTool import AsciiTool
 from api.conversionTool import ConversionTool
 from api.serialTool import SerialTool
+from api.shellTool import ShellTool
 
 # 变量声明
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('PY TOOLS')
@@ -44,30 +45,55 @@ class PyTools(QWidget, Ui_pyTools):
 
         self.animation = QPropertyAnimation(self, b"pos", self)
 
-        self.ascii = AsciiTool(self, path=abs_path)
-        self.conversion = ConversionTool(self)
-        self.serial = SerialTool(self)
+        # UI
+        self._widgetCreat()
+        # 按键
+        self._buttonCreat()
 
-        self.buttonItem = [
-            self.ascii,
-            self.conversion,
-            self.serial
-        ]
-
-        self.stackedWidget.addWidget(self.ascii)
-        self.stackedWidget.addWidget(self.conversion)
-        self.stackedWidget.addWidget(self.serial)
+        self.buttonItem = []
 
         self.buttonGroup = QButtonGroup(self)
-        self.buttonCreat()
-        self.buttonAdd()
+
+        self.addChild()
         self.connect()
-        self.asciiBtn.click()
+        self.buttonGroup.button(0).click()
+
+    def addNewWidget(self, widget, btn, idx):
+        """
+        添加按钮和对应的UI控件到主UI
+        :param widget: UI对象
+        :param btn: 按键对象
+        :param idx: 按键索引
+        :return:
+        """
+        # 管理UI数组
+        self.buttonItem.append(widget)
+        # 管理按键
+        self.buttonGroup.addButton(btn, id=idx)
+        # UI添加
+        self.stackedWidget.addWidget(widget)
+        # 按键添加
+        self.gridLayout.addWidget(btn, idx, 0)
+
+    def addChild(self):
+        self.addNewWidget(self.ascii, self.asciiBtn, 0)
+        self.addNewWidget(self.conversion, self.conversionBtn, 1)
+        self.addNewWidget(self.serial, self.serialBtn, 2)
+        self.addNewWidget(self.shell, self.shellBtn, 3)
+        spacerItem = QSpacerItem(20, 40, vPolicy=QSizePolicy.Expanding)
+        self.gridLayout.addItem(spacerItem)
 
     def connect(self):
         self.buttonGroup.buttonClicked[int].connect(self.buttonChanged)
 
-    def buttonCreat(self):
+    def _widgetCreat(self):
+        # 子UI
+        self.ascii = AsciiTool(self, path=abs_path)
+        self.conversion = ConversionTool(self)
+        self.serial = SerialTool(self)
+        self.shell = ShellTool(self)
+
+    def _buttonCreat(self):
         """
         增加按键控制UI切换
         :return:
@@ -75,25 +101,12 @@ class PyTools(QWidget, Ui_pyTools):
         self.asciiBtn = QPushButton('ASCII')
         self.conversionBtn = QPushButton('CONVERSION')
         self.serialBtn = QPushButton('SERIAL')
+        self.shellBtn = QPushButton('SHELL')
 
         self.asciiBtn.setCursor(Qt.PointingHandCursor)
         self.conversionBtn.setCursor(Qt.PointingHandCursor)
         self.serialBtn.setCursor(Qt.PointingHandCursor)
-
-    def buttonAdd(self):
-        """
-        添加按键到layout, 并进行管理
-        :return:
-        """
-        self.gridLayout.addWidget(self.asciiBtn, 0, 0)
-        self.gridLayout.addWidget(self.conversionBtn, 1, 0)
-        self.gridLayout.addWidget(self.serialBtn, 2, 0)
-        spacerItem = QSpacerItem(20, 40, vPolicy=QSizePolicy.Expanding)
-        self.gridLayout.addItem(spacerItem)
-
-        self.buttonGroup.addButton(self.asciiBtn, id=0)
-        self.buttonGroup.addButton(self.conversionBtn, id=1)
-        self.buttonGroup.addButton(self.serialBtn, id=2)
+        self.shellBtn.setCursor(Qt.PointingHandCursor)
 
     def buttonChanged(self, index):
         self.stackedWidget.setCurrentWidget(self.buttonItem[index])

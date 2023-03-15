@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>656</width>
-    <height>300</height>
+    <width>869</width>
+    <height>525</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -37,6 +37,15 @@
    </property>
    <item row="0" column="0">
     <widget class="QTableWidget" name="tableWidget">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>0</number>
+     </property>
      <property name="horizontalScrollBarPolicy">
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
