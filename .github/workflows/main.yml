@@ -1,0 +1,13 @@
+name: learn-github-actions
+run-name: ${{ github.actor }} is learning GitHub Actions
+on: [push]
+jobs: # 将工作流中运行的所有作业组合在一起
+  check-bats-version: # 作业1
+    runs-on: ubuntu-latest # 在最新的Ubuntu Linux运行器上运行, 托管到github上的新虚拟机
+    steps: # 将作业1运行的所有步骤组合在一起
+      - uses: actions/checkout@v3 # uses关键字指定此步骤将运行, actions/checkout是一个将储存库迁出到运行器的操作, 允许对代码运行脚本或其他操作, 也就是对仓库里的代码进行操作时需要这样做
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '14' # 这里加上上面的内容表示操作按照指定的node.js版本, 这里是v14, 会将node和npm加入PATH
+      - run: npm install -g bats # 安装bats测试包
+      - run: bats -v # 测试bats的版本
