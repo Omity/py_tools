@@ -34,33 +34,33 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
     env: # 环境变量
       version: ${{ needs.build_version_and_info.outputs.version }}
       body: ${{ needs.build_version_and_info.outputs.body }}
-      steps:
-        - name: copy code
-          uses: actions/checkout@v3 # 该action作用是将仓库代码拷贝到本地运行工作区
-          with:
-            submodules: recursive
-        - name: read env
-          uses: actions/setup-python@v4 # 设置python环境
-          with: # 像这些action需要的参数, 类似于设备树, 遵循一定的字段规则
-            python-version: "3.10" # 工程使用3.10版本python
-            architecture: "x64"
-            cache: 'pip'
-        - name: download dependence
-          run: | # 注意这里需要有对应的依赖目录, 可通过pip freeze > requirements.txt生成
-            pip install -r requirements.txt
-        - name: pack
-          run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的
-            python ui_to_py.py
-            python pack.py
-        - name: pack to installer
-          uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5 # 这个是遵循inno setup的一个工具集
-          with:
-            filepath: './py_tools.iss'
-        - name: update installer
-          uses: actions/upload-artifact@v3
-          with:
-            name: windows
-            path: ./setup.exe # 生成的安装文件
+    steps:
+      - name: copy code
+        uses: actions/checkout@v3 # 该action作用是将仓库代码拷贝到本地运行工作区
+        with:
+          submodules: recursive
+      - name: read env
+        uses: actions/setup-python@v4 # 设置python环境
+        with: # 像这些action需要的参数, 类似于设备树, 遵循一定的字段规则
+          python-version: "3.10" # 工程使用3.10版本python
+          architecture: "x64"
+          cache: 'pip'
+      - name: download dependence
+        run: | # 注意这里需要有对应的依赖目录, 可通过pip freeze > requirements.txt生成
+          pip install -r requirements.txt
+      - name: pack
+        run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的
+          python ui_to_py.py
+          python pack.py
+      - name: pack to installer
+        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5 # 这个是遵循inno setup的一个工具集
+        with:
+          filepath: './py_tools.iss'
+      - name: update installer
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows
+          path: ./setup.exe # 生成的安装文件
 
   release_version: # 发布版本
     needs: [ build_version_and_info,build_win_app ]
