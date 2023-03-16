@@ -1,0 +1,90 @@
+name: release pack # 发布软件版本
+
+on:
+  push:
+    branches:
+      - release # 发布分支才进行触发
+    workflow_dispatch: # 手动触发
+
+permission: write-all # 给所有工作写权限
+
+jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
+  build_version_and_info: # 任务, 构建版本号和更新
+    name: build release version and update information # 构建发布版本号和更新信息
+      runs-on: ubuntu-latest # job运行的虚拟机, 这里指定为ubuntu最新版本
+      outputs: # 本job的输出
+        version: ${{ steps.create_version.outputs.tag_name }} # 版本号
+        body: ${{ steps.create_version.outputs.body }} # 版本变更内容
+      steps: # 定义的步骤, 从上至下依次执行
+        - uses: release-drafter/release-drafter@v5 # 使用的action, 这里指定release-drafter的github actions, 可以理解为库
+          id: create_version
+          with: # 传入uses的action的参数, 这个根据不同的action有不同的传入参数, 像这里的release-drafter就需要给一个release-drafter.yml
+            config-name: release-drafter.yml
+            disable-autolabeler: true # 禁止自动标签
+          env: # 配置一系列的环境变量
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: list environment
+          run: | # 运行命令行, | 表示运行多个命令, 这里当然只是使用了一个, 但是没有影响
+            echo ${{ format('version={0}', steps.create_version.outputs.tag_name ) }}
+
+  build_win_app: # 构建window版软件
+    needs: build_version_and_info # 等待上面任务结束才执行
+    name: build app on Windows
+    runs-on: windows-latest
+    env: # 环境变量
+      version: ${{ needs.build_version_and_info.outputs.version }}
+      body: ${{ needs.build_version_and_info.outputs.body }}
+      steps:
+        - name: copy code
+          uses: actions/checkout@v3 # 该action作用是将仓库代码拷贝到本地运行工作区
+          with:
+            submodules: recursive
+        - name: read env
+          uses: actions/setup-python@v4 # 设置python环境
+          with: # 像这些action需要的参数, 类似于设备树, 遵循一定的字段规则
+            python-version: "3.10" # 工程使用3.10版本python
+            architecture: "x64"
+            cache: 'pip'
+        - name: download dependence
+          run: | # 注意这里需要有对应的依赖目录, 可通过pip freeze > requirements.txt生成
+            pip install -r requirements.txt
+        - name: pack
+          run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的
+            python ui_to_py.py
+            python pack.py
+        - name: pack to installer
+          uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5 # 这个是遵循inno setup的一个工具集
+          with:
+            filepath: './py_tools.iss'
+        - name: update installer
+          uses: actions/upload-artifact@v3
+          with:
+            name: windows
+            path: ./setup.exe # 生成的安装文件
+
+  release_version: # 发布版本
+    needs: [ build_version_and_info,build_win_app ]
+    name: release latest version
+    runs-on: ubuntu-latest
+    env:
+      version: ${{ needs.build_version_and_info.outputs.version }}
+      body: ${{ needs.build_version_and_info.outputs.body }}
+    steps:
+      - name: download installer
+        id: download
+        uses: actions/download-artifact@v3
+        with:
+          path: ./
+      - name: debug
+        run: |
+          echo ${{ format('version {0}', env.version ) }}
+          echo ${{steps.download.outputs.download-path}}
+          ls -R
+      - name: release files
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true # 覆盖文件
+          tag: ${{ env.version }}
+          body: ${{ env.body }}
+          artfacts: "window/*.exe"
