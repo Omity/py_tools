@@ -11,21 +11,21 @@ permission: write-all # 给所有工作写权限
 jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
   build_version_and_info: # 任务, 构建版本号和更新
     name: build release version and update information # 构建发布版本号和更新信息
-      runs-on: ubuntu-latest # job运行的虚拟机, 这里指定为ubuntu最新版本
-      outputs: # 本job的输出
-        version: ${{ steps.create_version.outputs.tag_name }} # 版本号
-        body: ${{ steps.create_version.outputs.body }} # 版本变更内容
-      steps: # 定义的步骤, 从上至下依次执行
-        - uses: release-drafter/release-drafter@v5 # 使用的action, 这里指定release-drafter的github actions, 可以理解为库
-          id: create_version
-          with: # 传入uses的action的参数, 这个根据不同的action有不同的传入参数, 像这里的release-drafter就需要给一个release-drafter.yml
-            config-name: release-drafter.yml
-            disable-autolabeler: true # 禁止自动标签
-          env: # 配置一系列的环境变量
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        - name: list environment
-          run: | # 运行命令行, | 表示运行多个命令, 这里当然只是使用了一个, 但是没有影响
-            echo ${{ format('version={0}', steps.create_version.outputs.tag_name ) }}
+    runs-on: ubuntu-latest # job运行的虚拟机, 这里指定为ubuntu最新版本
+    outputs: # 本job的输出
+      version: ${{ steps.create_version.outputs.tag_name }} # 版本号
+      body: ${{ steps.create_version.outputs.body }} # 版本变更内容
+    steps: # 定义的步骤, 从上至下依次执行
+      - uses: release-drafter/release-drafter@v5 # 使用的action, 这里指定release-drafter的github actions, 可以理解为库
+        id: create_version
+        with: # 传入uses的action的参数, 这个根据不同的action有不同的传入参数, 像这里的release-drafter就需要给一个release-drafter.yml
+          config-name: release-drafter.yml
+          disable-autolabeler: true # 禁止自动标签
+        env: # 配置一系列的环境变量
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: list environment
+        run: | # 运行命令行, | 表示运行多个命令, 这里当然只是使用了一个, 但是没有影响
+          echo ${{ format('version={0}', steps.create_version.outputs.tag_name ) }}
 
   build_win_app: # 构建window版软件
     needs: build_version_and_info # 等待上面任务结束才执行
