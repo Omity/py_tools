@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - release # 发布分支才进行触发
-    workflow_dispatch: # 手动触发
 
-permission: write-all # 给所有工作写权限
+permissions: write-all # 给所有工作写权限
 
 jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
   build_version_and_info: # 任务, 构建版本号和更新
