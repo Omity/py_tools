@@ -1,1 +1,29 @@
 # release-drafter action
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+categories:
+  - title: '🚀 New Functions'
+    labels:
+      - 'new functions'
+  - title: '🐛 Bug Fix'
+    labels:
+      - 'bug'
+  - title: ''🧰 Maintenance'
+    label: 'maintenance'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+change-title-escapes: '\<*_&'
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch
+template: |
+  ## changes
+
+  $CHANGES
