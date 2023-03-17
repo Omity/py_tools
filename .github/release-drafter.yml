@@ -27,3 +27,5 @@ template: |
   ## changes
 
   $CHANGES
+no-changes-template: | 
+  test for code
