@@ -3,7 +3,7 @@ name: release pack # 发布软件版本
 on:
   push:
     branches:
-      - release # 发布分支才进行触发
+      - master # 发布分支才进行触发
 
 permissions: write-all # 给所有工作写权限
 
