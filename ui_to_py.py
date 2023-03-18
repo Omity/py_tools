@@ -81,3 +81,4 @@ def runMain(directory):
 if __name__ == "__main__":
     current = os.getcwd()
     runMain(os.path.join(current, root_directory))
+    print(os.listdir('ui'))
