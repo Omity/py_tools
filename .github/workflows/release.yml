@@ -36,7 +36,7 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         with:
           ref: release # copy release分支, 不然默认是主分支
           submodules: recursive
-      - name: read env
+      - name: download env
         uses: actions/setup-python@v4 # 设置python环境
         with: # 像这些action需要的参数, 类似于设备树, 遵循一定的字段规则
           python-version: "3.10" # 工程使用3.10版本python
