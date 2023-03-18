@@ -33,7 +33,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir={#MySrcPath}
-OutputBaseFilename=setup
+OutputBaseFilename={#MyPackName}
 SetupIconFile={#MySrcPath}\data\py_tool.ico
 Compression=lzma
 SolidCompression=yes

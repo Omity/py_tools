@@ -37,7 +37,7 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
       - name: copy code
         uses: actions/checkout@v3 # 该action作用是将仓库代码拷贝到本地运行工作区
         with:
-          ref: test
+          ref: test # copy test分支, 不然默认是主分支
           submodules: recursive
       - name: read env
         uses: actions/setup-python@v4 # 设置python环境
@@ -50,10 +50,8 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
           pip install -r requirements.txt
       - name: pack
         run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的, 注意如果不加.\容易无法识别正确路径
-          pip list
           python .\ui_to_py.py 
           python .\pack.py
-          dir
       - name: pack to installer
         uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5 # 这个是遵循inno setup的一个工具集
         with:
@@ -62,7 +60,7 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         uses: actions/upload-artifact@v3
         with:
           name: windows
-          path: ./setup.exe # 生成的安装文件
+          path: ./py_tools.exe # 生成的安装文件
 
   release_version: # 发布版本
     needs: [ build_version_and_info,build_win_app ]
@@ -77,11 +75,6 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         uses: actions/download-artifact@v3
         with:
           path: ./
-      - name: debug
-        run: |
-          echo ${{ format('version {0}', env.version ) }}
-          echo ${{steps.download.outputs.download-path}}
-          ls -R
       - name: release files
         uses: ncipollo/release-action@v1
         with:
@@ -89,4 +82,4 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
           allowUpdates: true # 覆盖文件
           tag: ${{ env.version }}
           body: ${{ env.body }}
-          artfacts: "window/*.exe"
+          artfact: "window/*.exe"
