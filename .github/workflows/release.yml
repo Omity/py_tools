@@ -3,7 +3,7 @@ name: release pack # 发布软件版本
 on:
   push:
     branches:
-      - test # 发布分支才进行触发
+      - release # 发布分支才进行触发
 
 permissions: write-all # 给所有工作写权限
 
@@ -37,7 +37,7 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
       - name: copy code
         uses: actions/checkout@v3 # 该action作用是将仓库代码拷贝到本地运行工作区
         with:
-          ref: test # copy test分支, 不然默认是主分支
+          ref: release # copy test分支, 不然默认是主分支
           submodules: recursive
       - name: read env
         uses: actions/setup-python@v4 # 设置python环境

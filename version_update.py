@@ -57,7 +57,7 @@ def change_info(file, line, _old, _new):
         f.write(data)
 
 
-def main():
+def update_iss():
     new = f'{version.VERSION_MAIN}.{version.VERSION_SUB}.{version.VERSION_FIX}'
     for files in file_to_change:
         old = find_info_to_change(files, r'[0-9]+.[0-9]+.[0-9]+')
@@ -67,4 +67,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    update_iss()

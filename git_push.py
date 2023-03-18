@@ -17,8 +17,10 @@
 
 # 变量声明
 import os
+from update import version
+import version_update
 
-RELEASE_PATH = 'test'
+RELEASE_PATH = 'release'
 COMMIT_INFO = 'test for info'
 # 函数定义
 # def 
@@ -28,6 +30,8 @@ COMMIT_INFO = 'test for info'
 if __name__ == '__main__':
     print('Info: Note that this action commits all the modified and new files\n')
     print(f'Info: Prepare to push code to remote branch {RELEASE_PATH}\n')
+    print(f'Info: {RELEASE_PATH} version {version.PROJECT_VERSION} begin to update\n')
+    version_update.update_iss()
     os.system('git add .')
     os.system(f'git commit -m "{COMMIT_INFO}"')
     os.system(f'git push origin {RELEASE_PATH}')
