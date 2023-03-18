@@ -82,6 +82,7 @@ if __name__ == '__main__':
     print(current)
 
     pyinstaller = os.path.join(current, pyinstaller)
+    print(os.path.exists(pyinstaller))
 
     ico = ' -i ' + scanIco('data')[0]
     cmd = pyinstaller + ' -y ' + mainFile
