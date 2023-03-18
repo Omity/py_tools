@@ -6,9 +6,10 @@
 #define MyAppName "PY TOOLS"
 ; change the version if need
 #define MyAppVersion "0.0.4"
+#define MyPackName "py_tools"
 #define MyAppPublisher "Free Company, Inc."
 #define MyAppURL "https://github.com/Omity/py_tools"
-#define MyAppExeName "main.exe"
+#define MyAppExeName "{#MyPackName}.exe"
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".myp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
