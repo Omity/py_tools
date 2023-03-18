@@ -81,14 +81,14 @@ if __name__ == '__main__':
 
     pyinstaller = os.path.join(current, pyinstaller)
 
-    ico = ' -i ' + scanIco('./data')[0]
+    ico = ' -i ' + scanIco('data')[0]
     cmd = pyinstaller + ' -y ' + mainFile
-    for i in scanSrc('./api'):
+    for i in scanSrc('api'):
         cmd += ' -p ' + i
-    for i in scanSrc('./ui'):
+    for i in scanSrc('ui'):
         cmd += ' -p ' + i
 
-    for i in scanData('./data'):
+    for i in scanData('data'):
         cmd += data + i
 
     cmd += ico
