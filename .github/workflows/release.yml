@@ -49,9 +49,10 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         run: | # 注意这里需要有对应的依赖目录, 可通过pip freeze > requirements.txt生成
           pip install -r requirements.txt
       - name: pack
-        run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的
+        run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的, 注意如果不加.\容易无法识别正确路径
           python .\ui_to_py.py 
           python .\pack.py
+          dir
       - name: pack to installer
         uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5 # 这个是遵循inno setup的一个工具集
         with:
