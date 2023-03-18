@@ -79,4 +79,5 @@ def runMain(directory):
 
 
 if __name__ == "__main__":
-    runMain(root_directory)
+    current = os.getcwd()
+    runMain(os.path.join(current, root_directory))
