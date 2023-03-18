@@ -9,7 +9,7 @@
 #define MyPackName "py_tools"
 #define MyAppPublisher "Free Company, Inc."
 #define MyAppURL "https://github.com/Omity/py_tools"
-#define MyAppExeName "{#MyPackName}.exe"
+#define MyAppExeName "py_tools.exe"
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".myp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
