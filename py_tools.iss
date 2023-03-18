@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PY TOOLS"
-#define MyAppVersion "0.0.4"
+#define MyAppVersion "0.0.5"
 #define MyAppPublisher "Free Company, Inc."
 #define MyAppURL "https://github.com/Omity/py_tools"
 #define MyAppExeName "main.exe"

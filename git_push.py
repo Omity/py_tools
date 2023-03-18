@@ -21,7 +21,7 @@ from update import version
 import version_update
 
 RELEASE_PATH = 'release'
-COMMIT_INFO = 'test for info'
+COMMIT_INFO = 'release version v0.0.5'
 # 函数定义
 # def 
 # 类定义
