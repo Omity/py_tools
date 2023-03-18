@@ -31,7 +31,14 @@ from api.shellTool import ShellTool
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('PY TOOLS')
 abs_path = os.path.dirname(__file__)
 # 函数定义
-# def 
+
+
+def workflow_test():
+    argv = sys.argv
+    if len(argv) == 2:
+        if argv[1] == 'test':
+            print('app run success')
+            sys.exit(0)
 # 类定义
 
 
@@ -129,10 +136,10 @@ class PyTools(QWidget, Ui_pyTools):
 
 
 if __name__ == '__main__':
+    workflow_test()
     app = QApplication(sys.argv)
 
     ui = PyTools()
     ui.show()
-    print('app run success')
 
     sys.exit(app.exec_())
