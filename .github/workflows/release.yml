@@ -50,10 +50,8 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
           pip install -r requirements.txt
       - name: pack
         run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的
-          cd ${ GITHUB_WORKSPACE }
-          dir
-          python ui_to_py.py
-          python pack.py
+          python ui_to_py.py ${ GITHUB_WORKSPACE }
+          python pack.py ${ GITHUB_WORKSPACE }
       - name: pack to installer
         uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5 # 这个是遵循inno setup的一个工具集
         with:

@@ -21,6 +21,7 @@ import os
 # 函数定义
 # def 
 # 类定义
+import sys
 
 pyinstaller = r'venv\Scripts\pyinstaller.exe '
 mainFile = 'main.py'
@@ -77,7 +78,10 @@ def scanIco(directory):
 
 if __name__ == '__main__':
 
-    current = os.getcwd()
+    if sys.argv[1] != '':
+        current = sys.argv[1]
+    else:
+        current = os.getcwd()
 
     pyinstaller = os.path.join(current, pyinstaller)
 
