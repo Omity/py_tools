@@ -133,5 +133,6 @@ if __name__ == '__main__':
 
     ui = PyTools()
     ui.show()
+    print('app run success')
 
     sys.exit(app.exec_())
