@@ -21,8 +21,9 @@ import os
 # 函数定义
 # def 
 # 类定义
+import sys
 
-pyinstaller = r'venv\Scripts\pyinstaller.exe '
+pyinstaller = 'pyinstaller '
 mainFile = 'main.py'
 sourceFile = ['ascii.py', 'asciiTool.py', 'conversion.py', 'conversionTool.py', 'serial_tool.py', 'serialTool.py',
               'pytools.py']
@@ -77,18 +78,14 @@ def scanIco(directory):
 
 if __name__ == '__main__':
 
-    current = os.getcwd()
-
-    pyinstaller = os.path.join(current, pyinstaller)
-
-    ico = ' -i ' + scanIco('./data')[0]
+    ico = ' -i ' + scanIco('data')[0]
     cmd = pyinstaller + ' -y ' + mainFile
-    for i in scanSrc('./api'):
+    for i in scanSrc('api'):
         cmd += ' -p ' + i
-    for i in scanSrc('./ui'):
+    for i in scanSrc('ui'):
         cmd += ' -p ' + i
 
-    for i in scanData('./data'):
+    for i in scanData('data'):
         cmd += data + i
 
     cmd += ico

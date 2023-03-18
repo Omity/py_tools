@@ -21,7 +21,7 @@ import os.path
 # 变量声明
 import time
 
-root_directory = './ui'
+root_directory = 'ui'
 is_modify_time = 5 * 60
 # 函数定义
 
@@ -71,7 +71,6 @@ def transPyFile(filename):
 # 调用系统命令把UI文件转换成Python文件
 def runMain(directory):
     a_list = listUiFile(directory)
-    print(a_list)
     for uiFile in a_list:
         pyFile = transPyFile(uiFile)
         cmd = 'pyuic5 -o {pyfile} {uifile}'.format(pyfile=pyFile, uifile=uiFile)
@@ -79,4 +78,5 @@ def runMain(directory):
 
 
 if __name__ == "__main__":
-    runMain(root_directory)
+    current = os.getcwd()
+    runMain(os.path.join(current, root_directory))

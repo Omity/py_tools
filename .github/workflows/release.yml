@@ -3,7 +3,7 @@ name: release pack # 发布软件版本
 on:
   push:
     branches:
-      - master # 发布分支才进行触发
+      - release # 发布分支才进行触发
 
 permissions: write-all # 给所有工作写权限
 
@@ -22,9 +22,6 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
           disable-autolabeler: true # 禁止自动标签
         env: # 配置一系列的环境变量
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: list environment
-        run: | # 运行命令行, | 表示运行多个命令, 这里当然只是使用了一个, 但是没有影响
-          echo ${{ format('version={0}', steps.create_version.outputs.tag_name ) }}
 
   build_win_app: # 构建window版软件
     needs: build_version_and_info # 等待上面任务结束才执行
@@ -37,6 +34,7 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
       - name: copy code
         uses: actions/checkout@v3 # 该action作用是将仓库代码拷贝到本地运行工作区
         with:
+          ref: release # copy test分支, 不然默认是主分支
           submodules: recursive
       - name: read env
         uses: actions/setup-python@v4 # 设置python环境
@@ -48,19 +46,18 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         run: | # 注意这里需要有对应的依赖目录, 可通过pip freeze > requirements.txt生成
           pip install -r requirements.txt
       - name: pack
-        run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的
-          dir ${ GITHUB_WORKSPACE }
-          python ui_to_py.py
-          python pack.py
+        run: | # 首先需要对应ui文件转py, 然后调用打包工具生成对应的, 注意如果不加.\容易无法识别正确路径
+          python .\ui_to_py.py 
+          python .\pack.py
       - name: pack to installer
         uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5 # 这个是遵循inno setup的一个工具集
         with:
-          filepath: './py_tools.iss'
+          filepath: './inno_set_for_workflow.iss' # 生成的文件位于当前目录下, 对应upload-artifact的path
       - name: update installer
         uses: actions/upload-artifact@v3
         with:
           name: windows
-          path: ./setup.exe # 生成的安装文件
+          path: ./py_tools.exe # 生成的安装文件
 
   release_version: # 发布版本
     needs: [ build_version_and_info,build_win_app ]
@@ -75,11 +72,6 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         uses: actions/download-artifact@v3
         with:
           path: ./
-      - name: debug
-        run: |
-          echo ${{ format('version {0}', env.version ) }}
-          echo ${{steps.download.outputs.download-path}}
-          ls -R
       - name: release files
         uses: ncipollo/release-action@v1
         with:
@@ -87,4 +79,4 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
           allowUpdates: true # 覆盖文件
           tag: ${{ env.version }}
           body: ${{ env.body }}
-          artfacts: "window/*.exe"
+          artifacts: "windows/*.exe"
