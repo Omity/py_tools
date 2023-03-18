@@ -134,6 +134,10 @@ class PyTools(QWidget, Ui_pyTools):
             animation.setDuration(200)
             animation.start()
 
+    def show(self):
+        workflow_test()
+        return super(PyTools, self).show()
+
 
 if __name__ == '__main__':
     workflow_test()
