@@ -5,7 +5,7 @@
 
 #define MyAppName "PY TOOLS"
 ; change the version if need
-#define MyAppVersion "0.0.4"
+#define MyAppVersion "0.0.5"
 #define MyPackName "py_tools"
 #define MyAppPublisher "Free Company, Inc."
 #define MyAppURL "https://github.com/Omity/py_tools"
