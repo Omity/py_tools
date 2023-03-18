@@ -37,6 +37,7 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
       - name: copy code
         uses: actions/checkout@v3 # 该action作用是将仓库代码拷贝到本地运行工作区
         with:
+          ref: test
           submodules: recursive
       - name: read env
         uses: actions/setup-python@v4 # 设置python环境
