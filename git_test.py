@@ -19,7 +19,7 @@ import os
 
 # 变量声明
 DEVELOP_PATH = 'develop'
-COMMIT_INFO = 'test for info'
+COMMIT_INFO = 'test 0.0.4'
 # 函数定义
 # def 
 # 类定义
