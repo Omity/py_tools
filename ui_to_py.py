@@ -21,7 +21,7 @@ import os.path
 # 变量声明
 import time
 
-root_directory = './ui'
+root_directory = 'ui'
 is_modify_time = 5 * 60
 # 函数定义
 
