@@ -82,4 +82,4 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
           allowUpdates: true # 覆盖文件
           tag: ${{ env.version }}
           body: ${{ env.body }}
-          artfact: "window/*.exe"
+          artifacts: "window/*.exe"
