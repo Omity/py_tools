@@ -78,10 +78,8 @@ def scanIco(directory):
 
 if __name__ == '__main__':
 
-    if sys.argv[1] != '':
-        current = sys.argv[1]
-    else:
-        current = os.getcwd()
+    current = os.getcwd()
+    print(current)
 
     pyinstaller = os.path.join(current, pyinstaller)
 
