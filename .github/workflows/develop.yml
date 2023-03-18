@@ -33,6 +33,6 @@ jobs:
       - name: test running status
         uses: GuillaumeFalourd/assert-command-line-output@v2
         with:
-          command_line: ./dist/py_tools.exe test
+          command_line: ./dist/py_tools/py_tools.exe test
           contains: app run success
           expected_result: PASSED
