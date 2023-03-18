@@ -75,6 +75,9 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         uses: actions/download-artifact@v3
         with:
           path: ./
+      - name: debug
+        run: |
+          dir
       - name: release files
         uses: ncipollo/release-action@v1
         with:
