@@ -23,7 +23,7 @@ import os
 # 类定义
 import sys
 
-pyinstaller = r'venv\Scripts\pyinstaller.exe '
+pyinstaller = 'pyinstaller '
 mainFile = 'main.py'
 sourceFile = ['ascii.py', 'asciiTool.py', 'conversion.py', 'conversionTool.py', 'serial_tool.py', 'serialTool.py',
               'pytools.py']
@@ -77,12 +77,6 @@ def scanIco(directory):
 
 
 if __name__ == '__main__':
-
-    current = os.getcwd()
-    print(current)
-
-    pyinstaller = os.path.join(current, pyinstaller)
-    print(os.path.exists(pyinstaller))
 
     ico = ' -i ' + scanIco('data')[0]
     cmd = pyinstaller + ' -y ' + mainFile
