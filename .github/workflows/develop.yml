@@ -3,7 +3,7 @@ name: test functions # 测试软件是否可以正常工作, 这里只是简单�
 on:
   push:
     branches:
-    - develop
+      - develop
 
 permissions: write-all
 
