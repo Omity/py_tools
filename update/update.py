@@ -169,6 +169,72 @@ def 下载文件(url, 保存地址, 回调函数=None):
                     回调函数(进度百分比, 已下载大小, 文件大小MB, 下载速率MB, 剩余时间)
     return True
 
+class Update:
+
+    def __init__(self, target='https://github.com/Omity/py_tools/releases', features='html.parser',
+                 proxy='https://ghproxy.com', github='https://github.com'):
+        self.target = target
+        self.features = features
+        self.proxy = proxy
+        self.github = github
+        self.request = requests.Session()
+
+    def getHtml(self, des):
+        """
+        获取指定网页内容
+        :param des:
+        :return:
+        """
+        try:
+            return self.request.get(f'{self.target}/{des}').text
+        except requests.exceptions.ConnectionError:
+            return self.request.get(f'{self.proxy}/{self.target}/{des}').text
+
+    def getLatestVer(self):
+        """
+        获取最新版本
+        :return:
+        """
+        bf = BeautifulSoup(self.getHtml('latest'), self.features)
+        # 最新版本号位于<span class='ml-1'里面, 且应该是只有一个
+        return bf.select('span .ml-1')[0].get_text().strip()
+
+    def getUpdateInfo(self):
+        """
+        获取更新内容和下载地址
+        :return: 更新内容和下载文件地址, 格式: {'update_info': str, 'url': []}
+        """
+        _data = {
+            'update_info': '',
+            'url': []
+        }
+        bf = BeautifulSoup(self.getHtml('latest'), self.features)
+        # 更新内容位于<div ... class='markdown-body my-3'的子标签ul里面
+        _data['update_info'] = bf.select('div .markdown-body > ul')[0].get_text().strip()
+        # 下载地址需要重新获取网页
+        bf = BeautifulSoup(self.getHtml(f'expanded_assets/{self.getLatestVer()}'), self.features)
+        tmp = bf.select('div .d-flex > a')
+        for i in tmp:
+            _data['url'].append(f'{self.proxy}/{self.github}{i["href"]}')
+
+        return _data
+
+    def downUpdateZip(self, url, save):
+        """
+        下载指定路径的文件
+        :param save:
+        :param url:
+        :return:
+        """
+        rps = self.request.get(url, stream=True)
+        name = url.split('/')[-1]
+        print('start')
+        with open(os.path.join(save, name), 'wb') as f:
+            for chunk in rps.iter_content(chunk_size=10 * 1024):
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+
 
 if __name__ == '__main__':
     he = {"user-agent": "Mozilla / 5.0(Windows NT 10.0;WOW64) AppleWebKit / 537.36(KHTML, likeGecko) "
