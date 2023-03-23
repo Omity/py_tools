@@ -5,15 +5,17 @@
 #define MyAppVersion "0.0.4"
 #define MyAppPublisher "Free Company, Inc."
 #define MyAppURL "https://github.com/Omity/py_tools"
-#define MyAppExeName "main.exe"
+#define MyAppExeName "py_tools.exe"
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".myp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
+#define MyAppId "{7FFEEBE1-1304-4F50-9949-BA6975DC89A1}"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{7FFEEBE1-1304-4F50-9949-BA6975DC89A1}
+AppId={#StringChange(MyAppId, '{', '{{')}
+;AppId={{7FFEEBE1-1304-4F50-9949-BA6975DC89A1}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -29,6 +31,7 @@ DisableProgramGroupPage=yes
 OutputDir=C:\Study_log\project_code\pythonProject\py_github
 OutputBaseFilename=setup
 SetupIconFile=C:\Study_log\project_code\pythonProject\py_github\py_tools\data\py_tool.ico
+UninstallDisplayIcon=C:\Study_log\project_code\pythonProject\py_github\py_tools\data\py_tool.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -41,8 +44,8 @@ Name: "chinese"; MessagesFile: "compiler:Languages\Chinese.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Study_log\project_code\pythonProject\py_github\py_tools\dist\main\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Study_log\project_code\pythonProject\py_github\py_tools\dist\main\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Study_log\project_code\pythonProject\py_github\py_tools\dist\py_tools\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Study_log\project_code\pythonProject\py_github\py_tools\dist\py_tools\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -50,7 +53,11 @@ Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueTyp
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
-Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".myp"; ValueData: ""
+Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".myp"; ValueData: ""; Flags: uninsdeletevalue
+; 注册安装路径, 方便查找卸载
+Root: HKLM64; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{{#MyAppId}"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
+Root: HKLM64; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{{#MyAppId}"; ValueType: string; ValueName: "UninstallString"; ValueData: ""
+;
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -59,3 +66,42 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[code]
+function GetHKLM: Integer;
+begin
+  if IsWin64 then
+    Result := HKLM64
+  else
+    Result := HKLM
+end;
+ 
+function InitializeSetup(): Boolean;
+var
+  ResultCode: Integer;
+  uicmd: String;
+  strPath: String;
+begin
+  Result := true;
+  //检查是否有版本安装
+  if RegQueryStringValue(GetHKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#MyAppId}', 'UninstallString', uicmd) then
+  begin
+    //提供用户是否卸载当前版本的选项
+    if MsgBox('The software is detected installed.Whether to uninstall the current version?', mbInformation, MB_YESNO) = IDYES then
+    begin
+      if RegQueryStringValue(GetHKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#MyAppId}', 'InstallPath', strPath) then
+      begin
+        strPath := strPath + '\unins000.exe'
+        Exec(ExpandConstant(strPath), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
+      end;
+    end
+    else
+      Result := false;
+  end; 
+end;
+
+//删除注册表信息
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usUninstall then
+    RegDeleteKeyIncludingSubKeys(GetHKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#MyAppId}')
+end;

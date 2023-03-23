@@ -19,7 +19,7 @@ import os
 
 # 变量声明
 DEVELOP_PATH = 'develop'
-COMMIT_INFO = 'online update api'
+COMMIT_INFO = 'add functions to check whether software is installed'
 # 函数定义
 # def 
 # 类定义
