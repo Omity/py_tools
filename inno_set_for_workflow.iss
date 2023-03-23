@@ -14,12 +14,14 @@
 #define MyAppAssocExt ".myp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 #define MySrcPath "."
+#define MyAppId "{7FFEEBE1-1304-4F50-9949-BA6975DC89A1}"
 
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{7FFEEBE1-1304-4F50-9949-BA6975DC89A1}
+;AppId={{7FFEEBE1-1304-4F50-9949-BA6975DC89A1}
+AppId={#StringChange(MyAppId, '{', '{{')}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -57,6 +59,12 @@ Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: s
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
 Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".myp"; ValueData: ""
 
+; 注册安装路径, 方便查找卸载, 这里我们32和64都注册, 目前先按这样使用来
+Root: HKLM64; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{{#MyAppId}"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
+Root: HKLM64; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{{#MyAppId}"; ValueType: string; ValueName: "UninstallString"; ValueData: ""
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{{#MyAppId}"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{{#MyAppId}"; ValueType: string; ValueName: "UninstallString"; ValueData: ""
+
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
@@ -64,3 +72,42 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[code]
+function GetHKLM: Integer;
+begin
+  if IsWin64 then
+    Result := HKLM64
+  else
+    Result := HKLM
+end;
+
+function InitializeSetup(): Boolean;
+var
+  ResultCode: Integer;
+  uicmd: String;
+  strPath: String;
+begin
+  Result := true;
+  //检查是否有版本安装
+  if RegQueryStringValue(GetHKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#MyAppId}', 'UninstallString', uicmd) then
+  begin
+    //提供用户是否卸载当前版本的选项
+    if MsgBox('The software is detected installed.Whether to uninstall the current version?', mbInformation, MB_YESNO) = IDYES then
+    begin
+      if RegQueryStringValue(GetHKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#MyAppId}', 'InstallPath', strPath) then
+      begin
+        strPath := strPath + '\unins000.exe'
+        Exec(ExpandConstant(strPath), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
+      end;
+    end
+    else
+      Result := false;
+  end;
+end;
+
+//删除注册表信息
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+  if CurUninstallStep = usUninstall then
+    RegDeleteKeyIncludingSubKeys(GetHKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#MyAppId}')
+end;
