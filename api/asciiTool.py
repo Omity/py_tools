@@ -109,7 +109,7 @@ class AsciiTool(QWidget, Ui_ascii):
         super().__init__(parent)
         self.group = QButtonGroup(self)
         self.numType = 3
-        self.abspath = kwargs['path']
+        self.abspath = kwargs.get('path')
         self.setupUi(self)
         self.textBrowser.setSource(QUrl.fromLocalFile(os.path.join(self.abspath, 'data/ascii_info.html')))
 

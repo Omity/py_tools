@@ -15,26 +15,18 @@
 """
 # 库引入
 import os
-import time
 
-import project_info as pro
-import version as ver
 import requests
-import zipfile
 from bs4 import BeautifulSoup
 
 # 变量声明
-GITHUB_PATH = r'https://github.com'
-GITEE_PATH = r'https://ghproxy.com/https://gitee.com'
-UPDATE_PATH = f'{GITHUB_PATH}/{pro.PROJECT_AUTHOR}/{pro.PROJECT_NAME}/releases/latest'
-
 
 # 函数定义
 # def 
 # 类定义
 
 
-class ProjectUpdate:
+class ProjectUpdate(object):
 
     def __init__(self, server, headers=None, callback=None, features='html.parser', proxy='https://ghproxy.com',
                  *args, **kwargs):
@@ -42,8 +34,18 @@ class ProjectUpdate:
         self.callback = callback
         self.features = features
         self.proxy = proxy
-        self.headers = headers
+        self.headers = headers if headers is not None else {"user-agent": "Mozilla / 5.0(Windows NT 10.0;WOW64) "
+                                                                          "AppleWebKit / 537.36(KHTML, likeGecko) "
+                                                                          "Chrome / 75.0.3770.100Safari / 537.36"}
         self.request = requests.Session()
+        self.size = 0
+        self.chunk = 50 * 1024
+
+    def setCallback(self, call):
+        self.callback = call
+
+    def setChunk(self, chunk):
+        self.chunk = chunk
 
     def getHtml(self, des):
         """
@@ -53,8 +55,9 @@ class ProjectUpdate:
         """
         try:
             # 先尝试用镜像来查询, 主要面向国内
-            return self.request.get(f'{self.proxy}/{self.server}/{des}').text
-        except requests.exceptions.ConnectionError:
+            return self.request.get(f'{self.server}/{des}').text
+        except requests.exceptions.ConnectionError or requests.exceptions.SSLError:
+            print('try another')
             return self.request.get(f'{self.server}/{des}').text
 
     def getLatestVersion(self):
@@ -73,7 +76,11 @@ class ProjectUpdate:
         :return:
         """
         # 版本格式[x, x, x]
+        if not version:
+            return False
+        print('check version')
         latest = self.getLatestVersion()
+        print('get version success')
         latest_ver = list(map(int, latest.replace('v', '').split('.')))
         if latest_ver[0] > version[0] or latest_ver[1] > version[1] or \
                 latest_ver[2] > version[2]:
@@ -96,31 +103,27 @@ class ProjectUpdate:
         :param local:
         :return:
         """
+        if not os.path.exists(local):
+            os.mkdir(local)
         url = f'{self.server}/releases/download/{self.getLatestVersion()}/{online_pack}'
         # noinspection PyBroadException
         try:
             data = self.request.get(url, stream=True)
+            self.size = int(data.headers['Content-Length'])
+            print(self.size)
             with open(os.path.join(local, online_pack), 'wb') as f:
-                for chunk in data.iter_content(chunk_size=10 * 1024):
+                for chunk in data.iter_content(chunk_size=self.chunk):
+                    print('chunk xxx ')
                     if chunk:
                         f.write(chunk)
                         f.flush()
+                        print('write end')
+                        if self.callback:
+                            print('call')
+                            self.callback(self.chunk)
             return True
         except requests.exceptions:
             return False
-
-    @staticmethod
-    def unzip(_from, _to):
-        """
-        解压缩文件
-        :param _from:
-        :param _to:
-        :return:
-        """
-        file = zipfile.ZipFile(_from)
-        file.extractall(_to)
-        file.close()
-        os.remove(_from)
 
 
 if __name__ == '__main__':
@@ -128,4 +131,4 @@ if __name__ == '__main__':
                         "Chrome / 75.0.3770.100Safari / 537.36"}
 
     obj = ProjectUpdate('https://github.com/Omity/py_tools')
-    print(obj.getUpdateInfo())
+    print(obj.getUpdateInfo().split('\n'))

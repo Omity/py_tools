@@ -17,7 +17,7 @@
 
 # 变量声明
 import os
-from update import version
+from common import version
 import version_update
 
 RELEASE_PATH = 'release'
