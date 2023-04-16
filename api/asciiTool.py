@@ -2,6 +2,7 @@
 # _*_ coding: utf-8 _*_
 import os.path
 import sys
+import common.project_info as pi
 
 from PyQt5.QtCore import QRegExp, QUrl
 from PyQt5.QtGui import QRegExpValidator, QIcon
@@ -109,9 +110,9 @@ class AsciiTool(QWidget, Ui_ascii):
         super().__init__(parent)
         self.group = QButtonGroup(self)
         self.numType = 3
-        self.abspath = kwargs['path']
+        self.abspath = kwargs.get('path')
         self.setupUi(self)
-        self.textBrowser.setSource(QUrl.fromLocalFile(os.path.join(self.abspath, 'data/ascii_info.html')))
+        self.textBrowser.setSource(QUrl.fromLocalFile(os.path.join(self.abspath, f'{pi.DATA_FILE}/ascii_info.html')))
 
         self.transformChoiceItem = [
             self.asciiToNum,
@@ -169,6 +170,6 @@ class AsciiTool(QWidget, Ui_ascii):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ui = AsciiTool(path='../')
-    ui.setWindowIcon(QIcon('../data/py_tool.ico'))
+    ui.setWindowIcon(QIcon(f'../{pi.DATA_FILE}/py_tool.ico'))
     ui.show()
     sys.exit(app.exec_())

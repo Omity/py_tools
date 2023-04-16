@@ -24,6 +24,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QWidget, QApplication, QTableWidgetItem
 from ui.serial_tool import Ui_serial_tool
 
+
 # 变量声明
 # G_para = '' 
 # 函数定义
@@ -38,7 +39,7 @@ def checkPort():
             'description': i.description,
             'pid': i.pid,
             'vid': i.vid,
-            'number':i.serial_number,
+            'number': i.serial_number,
             'status': True
         }
         try:
@@ -53,7 +54,6 @@ def checkPort():
 
 
 class SerialTool(QWidget, Ui_serial_tool):
-
     _TimerTime = 500
 
     def __init__(self, parent=None, *args, **kwargs):

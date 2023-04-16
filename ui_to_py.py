@@ -71,6 +71,7 @@ def transPyFile(filename):
 # 调用系统命令把UI文件转换成Python文件
 def runMain(directory):
     a_list = listUiFile(directory)
+    print(a_list)
     for uiFile in a_list:
         pyFile = transPyFile(uiFile)
         cmd = 'pyuic5 -o {pyfile} {uifile}'.format(pyfile=pyFile, uifile=uiFile)

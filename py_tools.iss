@@ -29,7 +29,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=C:\Study_log\project_code\pythonProject\py_github
-OutputBaseFilename=setup
+OutputBaseFilename=py_tools
 SetupIconFile=C:\Study_log\project_code\pythonProject\py_github\py_tools\data\py_tool.ico
 UninstallDisplayIcon=C:\Study_log\project_code\pythonProject\py_github\py_tools\data\py_tool.ico
 Compression=lzma
