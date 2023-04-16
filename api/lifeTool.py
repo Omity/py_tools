@@ -14,8 +14,6 @@
 修改内容: 
 """
 # 库引入
-import json
-import os
 import re
 import sys
 import time
@@ -24,7 +22,6 @@ import socket
 from PyQt5.QtCore import QThread, QTimer
 
 from PyQt5.QtWidgets import QWidget, QApplication
-from bs4 import BeautifulSoup
 
 from ui.life import Ui_life
 
@@ -80,7 +77,7 @@ class LifeTool(QWidget, Ui_life):
             self.weather_3.setText(temp[2])
             self.weather_4.setText(temp[3])
             # 寻找温度情况
-            temp = re.findall(r'[+-]?[0-9]+\([0-9]+\)', re.sub('\x1b.*?m', '', txt[12]))  # 13行是当天的温度
+            temp = re.findall(r'[+-]?[0-9]+\(?[0-9]*\)?', re.sub('\x1b.*?m', '', txt[12]))  # 13行是当天的温度
             if len(temp) < 4:
                 return
             # self.weatherInfo.setText(f"{txt[2].strip()} {temp[-2]} {temp[-1]}")
@@ -112,21 +109,6 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     ui = LifeTool()
-    # # ui = QtWebEngineWidgets.QWebEngineView()
-    # # ui.load(QUrl('https://wttr.in/'))
     ui.show()
+
     sys.exit(app.exec_())
-    # print(requests.get('http://www.weather.com.cn/data/sk').content.decode('utf-8'))
-    # import requests
-    # import json
-    #
-    # # url = "http://httpbin.org/ip"  # 也可以直接在浏览器访问这个地址
-    # # r = requests.get(url)  # 获取返回的值
-    # # ip = json.loads(r.text)["origin"]  # 取其中某个字段的值
-    # # print(ip)
-    #
-    # url = 'https://wttr.in/'
-    # r = requests.get(url).text.split('\n')
-    # print(r[11])
-    # print(re.findall(r'[A-Za-z]+\s?[A-Za-z]+', re.sub('\x1b.*?m', '', r[11])))
-    # print(r[12])

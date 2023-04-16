@@ -75,7 +75,7 @@ def scanIco(directory):
 
 def zipFile(_dir, out):
     """
-    压缩文件
+    升级包不需要tools里面的exe文件, 需要在形成打包安装文件之前调用
     :param _dir:
     :param out:
     :return:
@@ -102,6 +102,8 @@ def packMain():
     for i in scanData(os.path.join(abspath, 'data')):
         cmd += f" --add-data {i}"
 
+    # cmd += f" --add-data {os.path.join(abspath, 'helper.exe')};{os.path.join(abspath, 'tools')}"
+
     # 打包后的目录名字, 注意yml文件对应打包的时候需要对应
     cmd += f"{ico} -n {packName}"
 
@@ -114,7 +116,7 @@ def packHelper():
     :return:
     """
     ico = f" -i {scanIco(os.path.join(abspath, 'data'))[0]}"
-    cmd = f"pyinstaller -y {helperFile} --noconsole --clean --log-level {log_level}"
+    cmd = f"pyinstaller -y -F {helperFile} --noconsole --clean --log-level {log_level}"
     for i in helperSrc:
         cmd += f" -p {i}"
     cmd += f"{ico} -n {helperPack}"
@@ -125,6 +127,8 @@ def copyHelper(_from, _to):
     files = os.listdir(_from)
     for file in files:
         if os.path.splitext(file)[1] == '.exe':
+            if not os.path.exists(_to):
+                os.mkdir(_to)
             shutil.copy(os.path.join(_from, file), os.path.join(_to, file))
 
 
@@ -148,6 +152,7 @@ if __name__ == '__main__':
     # os.system(cmd)
     packHelper()
     packMain()
-    copyHelper(f'./dist', f'./dist/{packName}')
+    zipFile(os.path.join('dist', packName), os.path.join(abspath, pi.PROJECT_UPDATE_FILE))
+    copyHelper(f'./dist', f'./dist/{packName}/tools')
     # zipFile(os.path.join('dist', packName), f"update/{pi.PROJECT_UPDATE_FILE}")
     # ph.updateHelper(os.path.join(f'tmp', pi.PROJECT_UPDATE_FILE), 'tmp')

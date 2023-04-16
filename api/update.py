@@ -19,6 +19,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+
 # 变量声明
 
 # 函数定义
@@ -29,7 +30,7 @@ from bs4 import BeautifulSoup
 class ProjectUpdate(object):
 
     def __init__(self, server, headers=None, callback=None, features='html.parser', proxy='https://ghproxy.com',
-                 *args, **kwargs):
+                 timeout=10, *args, **kwargs):
         self.server = server  # 服务器地址
         self.callback = callback
         self.features = features
@@ -40,6 +41,10 @@ class ProjectUpdate(object):
         self.request = requests.Session()
         self.size = 0
         self.chunk = 50 * 1024
+        self.breaks = False
+        self.failInfo = 'get server information failed'
+        self.timeout = timeout
+        self.latest = []
 
     def setCallback(self, call):
         self.callback = call
@@ -53,12 +58,22 @@ class ProjectUpdate(object):
         :param des:
         :return:
         """
+        # noinspection PyBroadException
         try:
-            # 先尝试用镜像来查询, 主要面向国内
-            return self.request.get(f'{self.server}/{des}').text
-        except requests.exceptions.ConnectionError or requests.exceptions.SSLError:
-            print('try another')
-            return self.request.get(f'{self.server}/{des}').text
+            return self.request.get(f'{self.server}/{des}', timeout=self.timeout).text
+        # except requests.exceptions.ConnectionError or requests.exceptions.SSLError or requests.exceptions.ReadTimeout:
+        except Exception:
+            print('try to get server: ', f'{self.proxy}/{self.server}/{des}')
+            # noinspection PyBroadException
+            try:
+                return self.request.get(f'{self.proxy}/{self.server}/{des}', timeout=self.timeout).text
+            # except requests.exceptions.ConnectionError or requests.exceptions.SSLError or \
+            #         requests.exceptions.ReadTimeout:
+            except Exception:
+                return ''
+        # finally:
+        #     print('finally')
+        #     return ''
 
     def getLatestVersion(self):
         """
@@ -67,7 +82,11 @@ class ProjectUpdate(object):
         """
         bs = BeautifulSoup(self.getHtml('releases/latest'), self.features)
         # 最新版本号位于<span class='ml-1'里面, 且应该是只有一个
-        return bs.select('span .ml-1')[0].get_text().strip()
+        # noinspection PyBroadException
+        try:
+            return bs.select('span .ml-1')[0].get_text().strip()
+        except Exception:
+            return None
 
     def isVersionBehind(self, version: list):
         """
@@ -79,9 +98,11 @@ class ProjectUpdate(object):
         if not version:
             return False
         print('check version')
-        latest = self.getLatestVersion()
-        print('get version success')
-        latest_ver = list(map(int, latest.replace('v', '').split('.')))
+        self.latest = self.getLatestVersion()
+        if not self.latest:
+            return False
+        print('get version: ', self.latest)
+        latest_ver = list(map(int, self.latest.replace('v', '').split('.')))
         if latest_ver[0] > version[0] or latest_ver[1] > version[1] or \
                 latest_ver[2] > version[2]:
             return True
@@ -94,7 +115,11 @@ class ProjectUpdate(object):
         """
         bs = BeautifulSoup(self.getHtml('releases/latest'), self.features)
         # 更新内容位于<div ... class='markdown-body my-3'的子标签ul里面
-        return bs.select('div .markdown-body > ul')[0].get_text().strip()
+        # noinspection PyBroadException
+        try:
+            return bs.select('div .markdown-body > ul')[0].get_text().strip()
+        except Exception:
+            return self.failInfo
 
     def downloadPack(self, online_pack, local):
         """
@@ -105,24 +130,37 @@ class ProjectUpdate(object):
         """
         if not os.path.exists(local):
             os.mkdir(local)
-        url = f'{self.server}/releases/download/{self.getLatestVersion()}/{online_pack}'
+        if not self.latest:
+            self.latest = self.getLatestVersion()
+        url = f'{self.proxy}/{self.server}/releases/download/{self.latest}/{online_pack}'
+        tryUrl = f"{self.server}/releases/download/{self.getLatestVersion()}/{online_pack}"
         # noinspection PyBroadException
         try:
-            data = self.request.get(url, stream=True)
+            print('try to get upgrade server: ', url)
+            data = self.request.get(url, stream=True, timeout=self.timeout)
+        except Exception or requests.exceptions.ReadTimeout:
+            print('try to get upgrade server: ', url)
+            data = self.request.get(tryUrl, stream=True, timeout=self.timeout)
+        # noinspection PyBroadException
+        try:
+            # data = self.request.get(url, stream=True)
             self.size = int(data.headers['Content-Length'])
-            print(self.size)
+            print(f'upgrade zip file size: {self.size / 1024 / 1024}MB')
             with open(os.path.join(local, online_pack), 'wb') as f:
                 for chunk in data.iter_content(chunk_size=self.chunk):
-                    print('chunk xxx ')
+                    if self.breaks:
+                        return False
+                    # print('chunk xxx ')
                     if chunk:
                         f.write(chunk)
                         f.flush()
                         print('write end')
                         if self.callback:
-                            print('call')
                             self.callback(self.chunk)
             return True
-        except requests.exceptions:
+        except Exception or requests.exceptions.ReadTimeout as e:
+            print(e)
+            print('download upgrade zip failed')
             return False
 
 
@@ -131,4 +169,6 @@ if __name__ == '__main__':
                         "Chrome / 75.0.3770.100Safari / 537.36"}
 
     obj = ProjectUpdate('https://github.com/Omity/py_tools')
+    print(obj.isVersionBehind([0, 0, 4]))
+    print(obj.latest)
     print(obj.getUpdateInfo().split('\n'))

@@ -57,7 +57,9 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         uses: actions/upload-artifact@v3
         with:
           name: windows
-          path: ./py_tools.exe # 生成的安装文件
+          path: |
+            ./py_tools.exe # 生成的安装文件
+            ./update.zip  # 升级包
 
   release_version: # 发布版本
     needs: [ build_version_and_info,build_win_app ]
@@ -79,4 +81,4 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
           allowUpdates: true # 覆盖文件
           tag: ${{ env.version }}
           body: ${{ env.body }}
-          artifacts: "windows/*.exe"
+          artifacts: "windows/*.exe,windows/update.zip"
