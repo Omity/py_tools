@@ -60,8 +60,13 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         uses: actions/upload-artifact@v3
         with:
           name: windows
-          path: |
+          path:
             py_tools.exe # 生成的安装文件
+      - name: update zip
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows
+          path:
             update.zip  # 升级包
 
   release_version: # 发布版本
