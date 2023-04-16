@@ -61,8 +61,8 @@ jobs: # 工作集, 如果不添加needs的依赖, 默认是并行触发的
         with:
           name: windows
           path: |
-            ./py_tools.exe # 生成的安装文件
-            ./update.zip  # 升级包
+            py_tools.exe # 生成的安装文件
+            update.zip  # 升级包
 
   release_version: # 发布版本
     needs: [ build_version_and_info,build_win_app ]
