@@ -15,7 +15,7 @@
 """
 # 库引入
 import re
-from update import version
+from common import version
 
 # 变量声明
 

@@ -16,9 +16,16 @@
 # 库引入
 
 # 变量声明
+PROJECT_SERVER = r'https://github.com'
 PROJECT_AUTHOR = 'Omity'
 PROJECT_NAME = 'py_tools'
-
+PROJECT_UPDATE_DIR = 'update'
+PROJECT_UPDATE_FILE = 'update.zip'
+APP_NAME = 'PY TOOLS'
+LOGGER_FILE = 'logger.txt'
+UPGRADE_EXE = 'helper.exe'
+TOOLS_FILE = 'tools'
+DATA_FILE = 'data'
 # 函数定义
 # def 
 # 类定义

@@ -18,8 +18,8 @@ import subprocess
 import sys
 import os
 
-from PyQt5.QtCore import QThread, pyqtSignal, QObject, Qt, QTimer, QEvent
-from PyQt5.QtGui import QTextCursor, QKeyEvent, QMouseEvent, QFocusEvent, QInputMethodEvent
+from PyQt5.QtCore import QThread, pyqtSignal, QObject, Qt
+from PyQt5.QtGui import QTextCursor, QKeyEvent
 from PyQt5.QtWidgets import QWidget, QApplication
 from ui.pshell import Ui_pshell
 
@@ -133,7 +133,8 @@ class ShellTool(QWidget, Ui_pshell):
     #     except AttributeError:
     #         pass
     #     print('last', self.currentPos)
-    #     if a0.type() == QEvent.KeyRelease and a0.key() == Qt.Key_Delete and self.textEdit.textCursor().position() == self.currentPos:
+    #     if a0.type() == QEvent.KeyRelease and a0.key() == Qt.Key_Delete and
+    #       self.textEdit.textCursor().position() == self.currentPos:
     #         print('yes')
     #         self.textEdit.setReadOnly(True)
     #         self.textEdit.setFocus()
