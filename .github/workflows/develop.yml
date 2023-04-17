@@ -1,11 +1,11 @@
 name: test functions # 测试软件是否可以正常工作, 这里只是简单的测试会不会崩溃
 
 on:
-#  push:
-#    branches:
-#      - develop
+  push:
+    branches:
+      - develop
 
-permissions: write-all
+permissions: write-all:wq
 
 jobs:
   test_software:

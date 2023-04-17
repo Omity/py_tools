@@ -112,6 +112,9 @@ def packMain():
     # 打包后的目录名字, 注意yml文件对应打包的时候需要对应
     cmd += f"{ico} -n {packName}"
 
+    # force to include the dependency
+    cmd += f" --collect-all charset_normalizer"
+
     os.system(cmd)
 
 
