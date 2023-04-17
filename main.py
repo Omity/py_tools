@@ -400,8 +400,8 @@ class Logger(object):
 
 if __name__ == '__main__':
     workflow_test()
-    sys.stdout = Logger('logger.txt', sys.stdout)
-    sys.stderr = Logger('logger.txt', sys.stderr)
+    # sys.stdout = Logger('logger.txt', sys.stdout)
+    # sys.stderr = Logger('logger.txt', sys.stderr)
     app = QApplication(sys.argv)
 
     ui = PyTools(_sys=sys.argv)
