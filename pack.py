@@ -72,6 +72,11 @@ def scanIco(directory):
                 a_list.append(path)
     return a_list
 
+######################################
+# 升级包目前是打包所有的压缩文件进行升级, 后期
+# 将考虑是否以增量形式进行远程升级
+######################################
+
 
 def zipFile(_dir, out):
     """
@@ -106,6 +111,9 @@ def packMain():
 
     # 打包后的目录名字, 注意yml文件对应打包的时候需要对应
     cmd += f"{ico} -n {packName}"
+
+    # force to include the dependency
+    cmd += f" --collect-all charset_normalizer"
 
     os.system(cmd)
 
