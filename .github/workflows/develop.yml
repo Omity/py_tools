@@ -5,7 +5,7 @@ on:
     branches:
       - develop
 
-permissions: write-all:wq
+permissions: write-all
 
 jobs:
   test_software:
